@@ -1,6 +1,7 @@
 // Copyright (C) 2020-2022 Intel Corporation
 //
 // SPDX-License-Identifier: MIT
+
 import './styles.scss';
 import { useDispatch } from 'react-redux';
 import React, { useEffect, useState } from 'react';
@@ -17,8 +18,10 @@ import FeedbackComponent from 'components/feedback/feedback';
 import { updateHistoryFromQuery } from 'components/resource-sorting-filtering';
 import TaskListContainer from 'containers/tasks-page/tasks-list';
 import { getTasksAsync, hideEmptyTasks, importTaskAsync } from 'actions/tasks-actions';
+
 import TopBar from './top-bar';
 import EmptyListComponent from './empty-list';
+
 interface Props {
     fetching: boolean;
     importing: boolean;
@@ -26,13 +29,16 @@ interface Props {
     count: number;
     countInvisible: number;
 }
+
 function TasksPageComponent(props: Props): JSX.Element {
     const {
         query, fetching, importing, count, countInvisible,
     } = props;
+
     const dispatch = useDispatch();
     const history = useHistory();
     const [isMounted, setIsMounted] = useState(false);
+
     const queryParams = new URLSearchParams(history.location.search);
     const updatedQuery = { ...query };
     for (const key of Object.keys(updatedQuery)) {
@@ -41,10 +47,12 @@ function TasksPageComponent(props: Props): JSX.Element {
             updatedQuery.page = updatedQuery.page ? +updatedQuery.page : 1;
         }
     }
+
     useEffect(() => {
         dispatch(getTasksAsync({ ...updatedQuery }));
         setIsMounted(true);
     }, []);
+
     useEffect(() => {
         if (isMounted) {
             history.replace({
@@ -52,6 +60,7 @@ function TasksPageComponent(props: Props): JSX.Element {
             });
         }
     }, [query]);
+
     useEffect(() => {
         if (countInvisible) {
             message.destroy();
@@ -72,6 +81,7 @@ function TasksPageComponent(props: Props): JSX.Element {
             );
         }
     }, [countInvisible]);
+
     const content = count ? (
         <>
             <TaskListContainer />
@@ -97,6 +107,7 @@ function TasksPageComponent(props: Props): JSX.Element {
     ) : (
         <EmptyListComponent query={query} />
     );
+
     return (
         <div className='cvat-tasks-page'>
             <TopBar
@@ -140,4 +151,5 @@ function TasksPageComponent(props: Props): JSX.Element {
         </div>
     );
 }
+
 export default React.memo(TasksPageComponent);
